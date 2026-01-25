@@ -1,0 +1,99 @@
+import os
+
+from gtts import gTTS
+
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+from io import BytesIO
+import pygame
+import time
+
+class Speak():
+    def __init__(self):
+        """
+        the contructor of the speaker. This function needs to call before starting the speaker.
+        :rtype: None
+        """
+        pygame.mixer.init()
+
+    def prepare_speak(self,text,file_name='output',lang="en"):
+        """
+        the function prepares the speaker. This function needs to call before starting the speaker.
+        Use the value return form this fucntion to input to the speaker function.
+        :param text: the text to speak
+        :param lang: the language of the speaker
+        :return:
+        """
+        filename = './result/'+file_name+".mp3"
+        # Stop & unload previous audio
+        # pygame.mixer.music.stop()
+        # pygame.mixer.music.unload()
+        try:
+            # Delete old file safely
+            if os.path.exists(filename):
+                os.remove(filename)
+        except:
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
+
+            # Delete old file safely
+            if os.path.exists(filename):
+                os.remove(filename)
+
+        # Create new TTS
+        tts = gTTS(text=text, lang=lang)
+        tts.save(filename)
+
+        return filename
+
+    def speak(self, filename):
+        """
+        the function speaks the speaker. This function needs to call before starting the speaker.
+        :param filename:
+        """
+        # Play
+        pygame.mixer.music.load(filename)
+        pygame.mixer.music.play()
+
+        while pygame.mixer.music.get_busy():
+            time.sleep(0.2)
+
+    def prepare_speak_no_save(self,text,lang="en"):
+        try:
+            mp3_fp = BytesIO()
+            tts = gTTS(text=text, lang=lang)
+            tts.write_to_fp(mp3_fp)
+            mp3_fp.seek(0)
+            return mp3_fp
+        except:
+            return None
+
+    def speak_no_save(self,mp3_fp):
+        if mp3_fp is None:
+            return None
+
+        try:
+            # 3. Tải dữ liệu từ bộ nhớ và phát
+            pygame.mixer.music.load(mp3_fp, "mp3")
+            pygame.mixer.music.play()
+
+            while pygame.mixer.music.get_busy():
+                time.sleep(0.2)
+        except:
+            return None
+
+    def stop_speak(self):
+        pygame.mixer.music.stop()
+        pygame.mixer.music.unload()
+
+
+SPEAK = Speak()
+
+if __name__ == '__main__':
+    data = SPEAK.prepare_speak_no_save("""All users now automatically start with a free one-month Pro trial. After that, you can subscribe to Pro or keep using the core features for free – now with Jupyter support included.
+
+PyCharm Professional users are unaffected and will continue to enjoy full access to all Pro features in the unified product.""")
+    SPEAK.speak_no_save(data)
+
+
+
