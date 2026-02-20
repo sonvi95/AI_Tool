@@ -19,14 +19,15 @@ from source.ui.mainFrame import MainFrame
 class VideoPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
-
         self.frame = None
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
         self.Bind(wx.EVT_PAINT, self.on_paint)
 
-
-
     def on_paint(self, evt):
+        """
+        on paint the data
+        :param evt:
+        """
         dc = wx.BufferedPaintDC(self)
         dc.Clear()
 

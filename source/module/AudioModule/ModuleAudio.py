@@ -100,7 +100,7 @@ RECODER_AUDIO = RecorderAudio()
 
 
 
-if __name__ == "__main__":
-    RECODER_AUDIO.record_until_silence()
-    AUDIO_FILE = Path(__file__).parent / "audio.wav"
-    RECODER_AUDIO.audio_to_text(AUDIO_FILE)
+# if __name__ == "__main__":
+#     RECODER_AUDIO.record_until_silence()
+#     AUDIO_FILE = Path(__file__).parent / "audio.wav"
+#     RECODER_AUDIO.audio_to_text(AUDIO_FILE)

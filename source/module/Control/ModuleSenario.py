@@ -8,6 +8,10 @@ class Scenario:
         self.configuration = configuration
 
     def get_introduce(self):
+        """
+        get introduce from the configuration
+        :return:
+        """
         print(self.configuration)
         key = self.configuration["Patient"]+self.configuration["Background"]
         rst = CACHE.get(key,{})
@@ -20,6 +24,10 @@ class Scenario:
         return rst
 
     def get_data_ice_phase(self):
+        """
+        get the data ice phase
+        :return:
+        """
         print(self.configuration)
         key = self.configuration['Patient']
         rst = CACHE.get(key,{})
@@ -31,6 +39,10 @@ class Scenario:
         return rst
 
     def start_convertation(self):
+        """
+        get start convert from the configuration
+        :return:
+        """
         print(self.configuration)
         key = self.configuration['Patient']+self.configuration['Background']+self.configuration['Person']
         rst = CACHE.get(key, {})
@@ -42,6 +54,10 @@ class Scenario:
         return rst
 
     def get_emotion(self):
+        """
+        get the emotion from the configuration
+        :return:
+        """
         print(self.configuration)
         key = self.configuration['Background']
         rst = CACHE.get(key, {})
@@ -53,6 +69,10 @@ class Scenario:
         return rst
 
     def get_question(self):
+        """
+        get the request
+        :return:
+        """
         key = "Do you have any questions? If you dont have any questions please say NO."
         rst = CACHE.get(key, {})
         if 'content' not in rst or 'mp4' not in rst or 'wav' not in rst:
@@ -62,6 +82,11 @@ class Scenario:
         return rst
 
     def get_answer_for_question(self,question):
+        """
+        get the answer for the question
+        :param question:
+        :return:
+        """
         key = "Answer"
         data_speak = API_GROG.get_answer_for_question(question,self.configuration['Patient'])
         file_output = SPEAK.create_video(data_speak, CACHE.get_hash_value(key))

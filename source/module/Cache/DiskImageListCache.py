@@ -3,11 +3,21 @@ import cv2
 
 class DiskImageListCache:
     def __init__(self, root="image_cache", ext=".png"):
+        """
+        initial the cache
+        :param root:
+        :param ext:
+        """
         self.root = root
         self.ext = ext
         os.makedirs(root, exist_ok=True)
 
     def key_dir(self, key):
+        """
+
+        :param key:
+        :return:
+        """
         return os.path.join(self.root, key)
 
     def exists(self, key):
@@ -26,6 +36,11 @@ class DiskImageListCache:
             cv2.imwrite(path, img)
 
     def load(self, key):
+        """
+        load the image
+        :param key:
+        :return:
+        """
         d = self.key_dir(key)
         if not os.path.isdir(d):
             return None

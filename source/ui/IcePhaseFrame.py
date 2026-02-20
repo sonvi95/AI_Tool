@@ -25,9 +25,11 @@ class VideoPanel(wx.Panel):
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
         self.Bind(wx.EVT_PAINT, self.on_paint)
 
-
-
     def on_paint(self, evt):
+        """
+        draw the frame to panel
+        :param evt:
+        """
         dc = wx.BufferedPaintDC(self)
         dc.Clear()
 
@@ -57,6 +59,10 @@ class BoardText(wx.Panel):
         event.Skip()
 
     def on_paint(self, event):
+        """
+        paint the data
+        :param event:
+        """
         dc = wx.PaintDC(self)
         gc = wx.GraphicsContext.Create(dc)
 
@@ -72,8 +78,13 @@ class BoardText(wx.Panel):
         gc.DrawRoundedRectangle(1, 1, w - 2, h - 2, 10)
 
     def on_write_text(self,text):
+        """
+        write the data
+        :param text:
+        """
         self.text.AppendText(text)
 
+#not use
 class LeftPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
@@ -252,6 +263,9 @@ class IcePhaseFrame(MainFrame):
         thread_show_video.start()
 
     def on_pain(self):
+        """
+        paint data
+        """
         while True:
             if self.current_frame is not None:
                 self.video_panel.frame = self.current_frame
@@ -262,10 +276,14 @@ class IcePhaseFrame(MainFrame):
         pass
 
     def show_video(self):
+        """
+        show the data
+        :return:
+        """
         senario = Scenario(self.configuration)
 
-        vidio_introduce = senario.get_introduce()
-        self.play_video_with_audio(vidio_introduce['content'],vidio_introduce['mp4'],vidio_introduce['wav'])
+        video_introduce = senario.get_introduce()
+        self.play_video_with_audio(video_introduce['content'],video_introduce['mp4'],video_introduce['wav'])
         if self.stop_down:
             return
         data_ice_phase = senario.get_data_ice_phase()
@@ -298,6 +316,13 @@ class IcePhaseFrame(MainFrame):
         self.btn_bottom.Enable()
 
     def play_video_with_audio(self,content,video_path, audio_path,time_wait= 0):
+        """
+        play the video and audio
+        :param content:
+        :param video_path:
+        :param audio_path:
+        :param time_wait:
+        """
         cap = cv2.VideoCapture(video_path)
         fps = cap.get(cv2.CAP_PROP_FPS)
         print(fps)
@@ -342,6 +367,9 @@ class IcePhaseFrame(MainFrame):
         self.playing = False
 
     def thread_show(self):
+        """
+        thread show
+        """
         while True:
             if self.stop_down:
                 break
