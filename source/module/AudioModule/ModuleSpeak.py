@@ -3,6 +3,9 @@ import os
 from gtts import gTTS
 
 import warnings
+
+from source.module.Video.Wav2Lip.Wav2LipEngine import ENGINE_WAV
+
 warnings.filterwarnings("ignore", category=UserWarning)
 from io import BytesIO
 import pygame
@@ -86,6 +89,29 @@ class Speak():
         pygame.mixer.music.stop()
         pygame.mixer.music.unload()
 
+    def create_video(self,text,file_name,lang="en"):
+        filename_wav = './result/'+file_name+".wav"
+        # Stop & unload previous audio
+        # pygame.mixer.music.stop()
+        # pygame.mixer.music.unload()
+        try:
+            # Delete old file safely
+            if os.path.exists(filename_wav):
+                os.remove(filename_wav)
+        except:
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
+
+            # Delete old file safely
+            if os.path.exists(filename_wav):
+                os.remove(filename_wav)
+        tts = gTTS(text, lang="en")
+        tts.save(filename_wav)
+
+        filename_mp4 = './result/'+file_name+".mp4"
+        # 2️⃣ AudioModule → Video
+        ENGINE_WAV.infer(filename_wav, filename_mp4)
+        return filename_mp4
 
 SPEAK = Speak()
 

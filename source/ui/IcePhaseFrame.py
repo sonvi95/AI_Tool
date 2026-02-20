@@ -1,16 +1,40 @@
 import re
 import threading
+
 import wx
 from pathlib import Path
 import time
 
-from source.module.Module import split_text
-from source.module.ModuleGrogAI import API_GROG
-from source.module.ModuleSpeak import SPEAK
-from source.module.ModuleSpeak_V2 import PEAK_V2
+from source.module.LLM.ModuleGrogAI import API_GROG
+from source.module.Control.ModuleSenario import Scenario
+from source.module.AudioModule.ModuleSpeak import SPEAK
+from source.module.AudioModule.ModuleSpeak_V2 import PEAK_V2
+from source.module.AudioModule.ModuleSpeechToText import SPEECH_TO_TEXT
 from source.ui.CreamPhaseFrame import CreamFrame
 from source.ui.mainFrame import MainFrame
+import sounddevice as sd
+import cv2
+import soundfile as sf
 
+
+class VideoPanel(wx.Panel):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.frame = None
+        self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
+        self.Bind(wx.EVT_PAINT, self.on_paint)
+
+
+
+    def on_paint(self, evt):
+        dc = wx.BufferedPaintDC(self)
+        dc.Clear()
+
+        if self.frame is not None:
+            h, w = self.frame.shape[:2]
+            bmp = wx.Bitmap.FromBuffer(w, h, self.frame)
+            dc.DrawBitmap(bmp, 0, 0)
 
 class BoardText(wx.Panel):
     def __init__(self, parent):
@@ -125,18 +149,18 @@ class IcePhaseFrame(MainFrame):
         self.list_data = []
         self.state = 'Get'
         #v1 v2
-        thread_get_data = threading.Thread(target=self.thread_get_data_ice_phase)
-        thread_get_data.start()
-        self.list_show = []
-        self.prepare_data = []
+        # thread_get_data = threading.Thread(target=self.thread_get_data_ice_phase)
+        # thread_get_data.start()
+        # self.list_show = []
+        # self.prepare_data = []
         #v1
         # thread_prepare = threading.Thread(target=self.thread_prepare)
         # thread_prepare.start()
 
         #v3
-        threading.Thread(target=self.thread_show).start()
-        thread_prepare = threading.Thread(target=self.thread_prepare_v3)
-        thread_prepare.start()
+        # threading.Thread(target=self.thread_show).start()
+        # thread_prepare = threading.Thread(target=self.thread_prepare_v3)
+        # thread_prepare.start()
 
         screen_width, screen_height = wx.GetDisplaySize()
         self.SetSize(int(0.8*screen_width) , int(0.8*screen_height))
@@ -147,9 +171,27 @@ class IcePhaseFrame(MainFrame):
         panel = wx.Panel(self)
 
         # ---------- Left small panel ----------
-        self.left_panel = LeftPanel(panel)
-        self.left_panel.SetBackgroundColour("white")
-        self.left_panel.SetMinSize((300, -1))   # fixed width
+        self.video_panel = VideoPanel(panel)
+        self.video_panel.SetBackgroundColour("white")
+        self.video_panel.SetMinSize((400, -1))   # fixed width
+
+        self.gauge = wx.Gauge(panel, range=100)
+        self.gauge.SetValue(100)
+
+        self.lbl_turn = wx.StaticText(panel, label="⏸ Waiting...")
+        font = self.lbl_turn.GetFont()
+        font.SetPointSize(14)
+        font.SetWeight(wx.FONTWEIGHT_BOLD)
+        self.lbl_turn.SetFont(font)
+
+        left_sizer = wx.BoxSizer(wx.VERTICAL)
+        left_sizer.Add(self.video_panel,1,wx.EXPAND | wx.ALL,5)
+        left_sizer.Add(self.gauge,0,wx.EXPAND | wx.ALL,5)
+        left_sizer.Add(self.lbl_turn, 0, wx.EXPAND | wx.ALL, 5)
+
+        # -------- STATE --------
+        self.current_frame = None
+        self.playing = False
 
         # ---------- Right big panel ----------
         self.right_panel = BoardText(panel)
@@ -162,7 +204,7 @@ class IcePhaseFrame(MainFrame):
         self.btn_bottom.Disable()
         # ---------- Top area: left + right ----------
         top_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        top_sizer.Add(self.left_panel,0,wx.EXPAND | wx.ALL,5)
+        top_sizer.Add(left_sizer,0,wx.EXPAND | wx.ALL,5)
         top_sizer.Add(self.right_panel,1,wx.EXPAND | wx.ALL,5)
 
         # ---------- Main layout ----------
@@ -201,10 +243,103 @@ class IcePhaseFrame(MainFrame):
         # self.thread_speak_v2.start()
 
         #v3
-        thread_speak_v3 = threading.Thread(target=self.thread_speak_v3)
-        thread_speak_v3.start()
+        # thread_speak_v3 = threading.Thread(target=self.thread_speak_v3)
+        # thread_speak_v3.start()
+
+        # threading.Thread(target=self.on_pain).start()
+
+        thread_show_video = threading.Thread(target=self.show_video)
+        thread_show_video.start()
+
+    def on_pain(self):
+        while True:
+            if self.current_frame is not None:
+                self.video_panel.frame = self.current_frame
+                self.video_panel.Refresh(False)
 
 
+    def thread_show_process(self):
+        pass
+
+    def show_video(self):
+        senario = Scenario(self.configuration)
+
+        vidio_introduce = senario.get_introduce()
+        self.play_video_with_audio(vidio_introduce['content'],vidio_introduce['mp4'],vidio_introduce['wav'])
+        if self.stop_down:
+            return
+        data_ice_phase = senario.get_data_ice_phase()
+        self.play_video_with_audio('\n'+data_ice_phase['content'], data_ice_phase['mp4'], data_ice_phase['wav'])
+        if self.stop_down:
+            return
+        question = senario.get_question()
+        self.play_video_with_audio('', question['mp4'], question['wav'])
+        if self.stop_down:
+            return
+        s_time = time.time()
+
+        while True:
+            if self.stop_down:
+                return
+            question = SPEECH_TO_TEXT.speech_to_text()
+            if question.strip().lower() != '':
+                if question.strip().lower() == 'no' or question.strip().lower() == '':
+                    break
+                try:
+                    data_response = senario.get_answer_for_question(question)
+                    self.play_video_with_audio('', data_response['mp4'], data_response['wav'])
+                except:
+                    break
+
+            if time.time() - self.s_time > 10 * 60:
+                break
+        # emotion = senario.get_emotion()
+        # self.play_video_with_audio(emotion['content'], emotion['mp4'], emotion['wav'])
+        self.btn_bottom.Enable()
+
+    def play_video_with_audio(self,content,video_path, audio_path,time_wait= 0):
+        cap = cv2.VideoCapture(video_path)
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        print(fps)
+        if fps <= 0:
+            fps = 25
+        frame_time = 1.0 / fps
+        # Load audio
+        audio, sr = sf.read(audio_path, dtype="float32")
+        # pygame.mixer.music.load(filename)
+        # pygame.mixer.music.play()
+
+        self.playing = True
+        sd.stop()
+        sd.play(audio, sr)
+        start_time = time.time()
+        if content!='':
+            self.right_panel.on_write_text(content+'\n')
+        # start_time = time.time()
+        frame_index = 0
+
+        while cap.isOpened() and self.playing:
+            if self.stop_down:
+                break
+            ret, frame = cap.read()
+            if not ret:
+                break
+            s_t = time.time()
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            self.current_frame = frame
+            self.video_panel.frame = frame
+            self.video_panel.Refresh(False)
+
+            frame_index += 1
+            expected = frame_index * frame_time
+            actual = time.time() - start_time
+            delay = expected - actual
+            if delay > 0:
+                time.sleep(delay)
+
+        cap.release()
+        sd.stop()
+        self.playing = False
 
     def thread_show(self):
         while True:
@@ -278,7 +413,7 @@ class IcePhaseFrame(MainFrame):
 
     def stop_thread(self):
         self.stop_down = True
-        SPEAK.stop_speak()
+        # SPEAK.stop_speak()
         # PEAK_V2.stop()
 
 
@@ -394,7 +529,6 @@ class IcePhaseFrame(MainFrame):
 
     def on_close(self,evt):
         self.stop_thread()
-        self.left_panel.off_switch()
         evt.Skip()
 
     def thread_read(self):

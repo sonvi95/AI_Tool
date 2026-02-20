@@ -5,6 +5,8 @@ from pathlib import Path
 class FileConfiguration():
     def __init__(self):
         self.path = Path("D:/code/configuration.json")
+        print(self.path)
+        print(self.path.exists())
 
     def load_json(self):
         """

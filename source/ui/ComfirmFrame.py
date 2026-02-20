@@ -1,8 +1,11 @@
+import threading
+
 import wx
 
-from source.module.ModuleFileConfiguration import FILE_CONFIGURATION
+from source.module.Control.ModuleFileConfiguration import FILE_CONFIGURATION
+from source.module.Control.ModuleSenario import Scenario
 from source.ui.IcePhaseFrame import IcePhaseFrame
-
+import wx.lib.newevent
 
 # from source.ui.StartWindow import StartFrame
 
@@ -12,6 +15,29 @@ configuration = {
     "Patient": "Ms. Hoài, 46 years old, generally healthy, married, and currently working as a chief accountant at a large corporation in Hanoi. She has a history of stomach pain."
 }
 
+ThreadDoneEvent, EVT_THREAD_DONE = wx.lib.newevent.NewEvent()
+
+
+class WorkerThread(threading.Thread):
+    def __init__(self, window, configuration):
+        super().__init__(daemon=True)
+        self.window = window
+        self.configuration = configuration
+
+    def run(self):
+        # Giả lập xử lý nặng
+        senario = Scenario(self.configuration)
+        data_introduce = senario.get_introduce()
+        senario.get_question()
+        data_ice_phase = senario.get_data_ice_phase()
+        print(data_introduce)
+        print(data_ice_phase)
+        emotion = senario.get_emotion()
+        print(emotion)
+        start_convertation = senario.start_convertation()
+        # GỬI EVENT VỀ UI
+        evt = ThreadDoneEvent()
+        wx.PostEvent(self.window, evt)
 
 class ComfirmFrame(wx.Frame):
     def __init__(self,parent):
@@ -38,16 +64,16 @@ class ComfirmFrame(wx.Frame):
 
         # -------- Bottom buttons --------
         btn_left = wx.Button(panel, label="Back", size=(100, 35))
-        btn_right = wx.Button(panel, label="OK", size=(100, 35))
+        self.btn_right = wx.Button(panel, label="OK", size=(100, 35))
 
         btn_left.Bind(wx.EVT_BUTTON, self.on_back)
-        btn_right.Bind(wx.EVT_BUTTON, self.on_ok)
+        self.btn_right.Bind(wx.EVT_BUTTON, self.on_ok)
 
         # -------- Bottom sizer --------
         bottom_sizer = wx.BoxSizer(wx.HORIZONTAL)
         bottom_sizer.Add(btn_left, 0, wx.ALL, 10)
         bottom_sizer.AddStretchSpacer()
-        bottom_sizer.Add(btn_right, 0, wx.ALL, 10)
+        bottom_sizer.Add(self.btn_right, 0, wx.ALL, 10)
 
         # -------- Main layout --------
         main_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -69,6 +95,7 @@ class ComfirmFrame(wx.Frame):
 
         panel.SetSizer(main_sizer)
         self.show_text_information()
+        self.Bind(EVT_THREAD_DONE, self.on_thread_done)
 
         self.Show()
 
@@ -79,8 +106,35 @@ class ComfirmFrame(wx.Frame):
         self.text_ctrl.SetValue(data_show)
 
     def on_ok(self, event):
+        # threading.Thread(target=self.thread_function).start()
+        # senario = Scenario(self.configuration)
+        # data_introduce = senario.get_introduce()
+        # data_ice_phase = senario.get_data_ice_phase()
+        # question = senario.get_question()
+        # IcePhaseFrame(self,self.configuration)
+        # self.Show(False)
+        self.btn_right.Disable()
+        self.worker = WorkerThread(self,self.configuration)
+        self.worker.start()
+
+    def on_thread_done(self,evt):
         IcePhaseFrame(self,self.configuration)
         self.Show(False)
+
+    def thread_function(self,):
+        senario = Scenario(self.configuration)
+        data_introduce = senario.get_introduce()
+        senario.get_question()
+        data_ice_phase = senario.get_data_ice_phase()
+        print(data_introduce)
+        print(data_ice_phase)
+        emotion = senario.get_emotion()
+        print(emotion)
+        # IcePhaseFrame(self,self.configuration)
+        # self.Show(False)
+
+        evt = ThreadDoneEvent()
+        wx.PostEvent(self.window, evt)
 
     def on_back(self,event):
         self.parent.Show(True)

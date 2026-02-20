@@ -1,7 +1,7 @@
 import wx
 
-from source.module.ModuleFileConfiguration import FILE_CONFIGURATION
-from source.module.ModuleGrogAI import API_GROG
+from source.module.Control.ModuleFileConfiguration import FILE_CONFIGURATION
+from source.module.LLM.ModuleGrogAI import API_GROG
 
 
 class PromptFrame(wx.Frame):

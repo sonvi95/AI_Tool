@@ -4,13 +4,13 @@ import wx
 import cv2
 import threading
 
-from source.module.DeepFaceThread import DeepFaceThread
+from source.module.Analysis.DeepFaceThread import DeepFaceThread
 
 
 class PanelCamera(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
-
+        self.parent = parent
         self.cap = None
         self.latest_frame = None
         self.running = False

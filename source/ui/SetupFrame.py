@@ -1,6 +1,6 @@
 import wx
 
-from source.module.ModuleFileConfiguration import FILE_CONFIGURATION
+from source.module.Control.ModuleFileConfiguration import FILE_CONFIGURATION
 from source.ui.DialogChangeName import ChangeDialog
 
 
