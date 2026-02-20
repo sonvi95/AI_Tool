@@ -8,7 +8,6 @@ CONNECTORS = [
 ]
 
 def split_into_sentences(text):
-    # Tách câu theo dấu chấm, hỏi, cảm
     sentences = re.split(r'(?<=[.!?])\s+', text.strip())
     return sentences
 
@@ -18,7 +17,6 @@ def word_count(s):
 def split_long_sentence(sentence):
     parts = [sentence]
 
-    # Ưu tiên tách theo dấu phẩy
     if "," in sentence:
         parts = [p.strip() for p in sentence.split(",")]
 
@@ -28,7 +26,6 @@ def split_long_sentence(sentence):
         if word_count(part) <= MAX_WORDS:
             results.append(part)
         else:
-            # Tách tiếp theo liên từ
             pattern = r'\b(' + '|'.join(CONNECTORS) + r')\b'
             sub_parts = re.split(pattern, part)
 

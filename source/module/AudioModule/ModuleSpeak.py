@@ -62,6 +62,12 @@ class Speak():
             time.sleep(0.2)
 
     def prepare_speak_no_save(self,text,lang="en"):
+        """
+        convert from text to mp3.
+        :param text:
+        :param lang:
+        :return:
+        """
         try:
             mp3_fp = BytesIO()
             tts = gTTS(text=text, lang=lang)
@@ -72,11 +78,15 @@ class Speak():
             return None
 
     def speak_no_save(self,mp3_fp):
+        """
+        play the mp3.
+        :param mp3_fp:
+        :return:
+        """
         if mp3_fp is None:
             return None
 
         try:
-            # 3. Tải dữ liệu từ bộ nhớ và phát
             pygame.mixer.music.load(mp3_fp, "mp3")
             pygame.mixer.music.play()
 
@@ -86,10 +96,20 @@ class Speak():
             return None
 
     def stop_speak(self):
+        """
+        stop speaking
+        """
         pygame.mixer.music.stop()
         pygame.mixer.music.unload()
 
     def create_video(self,text,file_name,lang="en"):
+        """
+        create the video form text
+        :param text:
+        :param file_name:
+        :param lang:
+        :return:
+        """
         filename_wav = './result/'+file_name+".wav"
         # Stop & unload previous audio
         # pygame.mixer.music.stop()

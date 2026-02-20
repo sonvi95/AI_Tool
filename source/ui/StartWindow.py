@@ -1,12 +1,16 @@
 import wx
 
-from source.ui.ComfirmFrame import ComfirmFrame
+from source.ui.ComfirmFrame import ConfirmFrame
 from source.ui.FramePrompt import PromptFrame
 from source.ui.SetupFrame import SetupFrame
 
 
 class StartFrame(wx.Frame):
     def __init__(self):
+        """
+        Create frame when app starts.
+        :rtype: None
+        """
         super().__init__(None, title="ICE CREAM 2.0", size=(300, 300))
 
         panel = wx.Panel(self)
@@ -43,13 +47,25 @@ class StartFrame(wx.Frame):
         self.Show()
 
     def run_start(self,event):
-        confirm_frame = ComfirmFrame(self)
+        """
+        This function is used to execute the Confirmly frame.
+        :rtype: None
+        """
+        confirm_frame = ConfirmFrame(self)
         self.Show(False)
 
     def on_prompt(self,evt):
+        """
+        The function is used to execute the Prompt frame.
+        :param evt:
+        """
         PromptFrame()
 
     def run_setup(self,event):
+        """
+        The function is used to execute the SetupFrame frame.
+        :param event:
+        """
         SetupFrame(self)
         self.Show(False)
 
