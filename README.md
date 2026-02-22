@@ -22,8 +22,6 @@ pip install -r requirements.txt
 * Copy our evaluation scripts given in this folder to the cloned repository.
 ```  
     cd Wav2Lip/evaluation/scores_LSE/
-    cp *.py syncnet_python/
-    cp *.sh syncnet_python/ 
 ```
 **Note: We will release the test filelists for LRW, LRS2 and LRS3 shortly once we receive permission from the dataset creators. We will also release the Real World Dataset we have collected shortly.**
 
