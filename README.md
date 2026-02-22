@@ -94,17 +94,17 @@ code/
 - Git
 
 ### Steps
-
+```
 git clone https://github.com/sonvi95/AI_Tool/tree/main
 cd project-name  
 pip install -r requirements.txt
-
+```
 ---
 
 ## 🚀 Usage
-
+```
 python main.py
-
+```
 ---
 
 ## 🔧 Configuration
