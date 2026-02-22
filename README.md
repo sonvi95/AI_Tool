@@ -14,9 +14,7 @@ git clone https://github.com/joonson/syncnet_python.git
 * Follow the procedure given in the above linked [repository](https://github.com/joonson/syncnet_python) to download the pretrained models and set up the dependencies. 
     * **Note: Please install a separate virtual environment for the evaluation scripts. The versions used by Wav2Lip and the publicly released code of SyncNet is different and can cause version mis-match issues. To avoid this, we suggest the users to install a separate virtual environment for the evaluation scripts**
 ```
-cd syncnet_python
 pip install -r requirements.txt
-sh download_model.sh
 ```
 * The above step should ensure that all the dependencies required by the repository is installed and the pre-trained models are downloaded.
 
