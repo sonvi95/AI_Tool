@@ -54,7 +54,7 @@ code/
 │
 │   ├── video/                    # handle video / lipsync
 │   │   ├── __init__.py
-│   │   └── wav2lip/
+│   │   └── wav2lip/              # https://github.com/Rudrabha/Wav2Lip 
 │
 │   ├── cache/                    # cache disk / image
 │   │   ├── __init__.py
@@ -110,7 +110,8 @@ python main.py
 ## 🔧 Configuration
 
 Describe important configuration options here.
-
+Need to download the source/video/wav2lip to run it.
+Refer: https://github.com/Rudrabha/Wav2Lip
 ---
 
 ## 🧪 Examples
