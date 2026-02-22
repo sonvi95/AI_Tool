@@ -36,7 +36,7 @@ Explain:
 ---
 
 ## 📂 Project Structure
-
+```
 code/
 ├── data/                         
 │
@@ -84,7 +84,7 @@ code/
 │
 ├── requirements.txt
 └── README.md
-
+```
 ---
 
 ## ⚙️ Installation
