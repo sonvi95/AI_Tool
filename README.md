@@ -28,7 +28,6 @@ pip install -r requirements.txt
 * Our evaluation technique does not require ground-truth of any sorts. Given lip-synced videos we can directly calculate the scores from only the generated videos. Please store the generated videos (from our test sets or your own generated videos) in the following folder structure.
 ```
 video data root (Folder containing all videos)
-├── All .mp4 files
 ```
 * Change the folder back to the cloned repository. 
 ```
