@@ -38,49 +38,50 @@ Explain:
 ## 📂 Project Structure
 
 code/
-├── data/
+├── data/                         
+│
 ├── source/
 │   ├── __init__.py
-│   ├── module/
-│   │   ├── Analysis/
-│   │   │   ├── __init__.py
-│   │   │   ├── DeepFaceThread.py
-│   │   ├── AudioModule/
-│   │   │   ├── __init__.py
-│   │   │   ├── ModuleAudio.py
-│   │   │   ├── ModuleSpeak.py
-│   │   ├── Cache/
-│   │   │   ├── __init__.py
-│   │   │   ├── DiskCache.py
-│   │   │   ├── DiskImageListCache.py
-│   │   ├── Control/
-│   │   │   ├── __init__.py
-│   │   │   ├── Module.py
-│   │   │   ├── ModuleControler.py
-│   │   │   ├── ModuleFileConfiguration.py
-│   │   │   ├── ModuleSenario.py
-│   │   ├── LLM/
-│   │   │   ├── __init__.py
-│   │   │   ├── KeyData.py
-│   │   │   ├── ModuleApi.py
-│   │   │   ├── ModuleGrogAI.py
-│   │   ├── Video/
-│   │   │   ├── __init__.py
-│   │   │   ├── Wav2Lip
+│
+│   ├── analysis/                 # analysis emotion
 │   │   ├── __init__.py
-│   └── ui/
+│   │   └── deepface_thread.py
+│
+│   ├── audio/                    # handle audio
 │   │   ├── __init__.py
-│   │   ├── ComfirmFrame.py
-│   │   ├── CreamPhaseFrame.py
-│   │   ├── DialogChangeName.py
-│   │   ├── FramePrompt.py
-│   │   ├── IcePhaseFrame.py
-│   │   ├── mainFrame.py
-│   │   ├── mainPanel.py
-│   │   ├── PanelCamera.py
-│   │   ├── PanelSpeak.py
-│   │   ├── SetupFrame.py
-│   │   ├── StartWindow.py
+│   │   ├── audio_module.py
+│   │   └── speak_module.py
+│
+│   ├── video/                    # handle video / lipsync
+│   │   ├── __init__.py
+│   │   └── wav2lip/
+│
+│   ├── cache/                    # cache disk / image
+│   │   ├── __init__.py
+│   │   ├── disk_cache.py
+│   │   └── disk_image_list_cache.py
+│
+│   ├── llm/                      # LLM / API
+│   │   ├── __init__.py
+│   │   ├── key_data.py
+│   │   ├── api_client.py
+│   │   └── groq_ai.py
+│
+│   ├── ui/                       # UI for user
+│   │   ├── __init__.py
+│   │   ├── start_window.py
+│   │   ├── setup_frame.py
+│   │   ├── main_frame.py
+│   │   ├── main_panel.py
+│   │   ├── panel_camera.py
+│   │   ├── panel_speak.py
+│   │   ├── confirm_frame.py
+│   │   ├── ice_phase_frame.py
+│   │   ├── cream_phase_frame.py
+│   │   ├── dialog_change_name.py
+│   │   └── frame_prompt.py
+│   └── main.py                   # entry point
+│
 ├── requirements.txt
 └── README.md
 
